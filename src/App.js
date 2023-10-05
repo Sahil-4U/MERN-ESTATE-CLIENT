@@ -1,9 +1,9 @@
-import './App.css';
+
 
 function App() {
   return (
-    <div className="App">
-      <h1>hi react</h1>
+    <div>
+      <h1 className='text-3xl font-bold text-center'>hi react</h1>
     </div>
   );
 }
