@@ -45,10 +45,7 @@ function Profile() {
                 console.log(error);
             },
             () => {
-                getDownloadURL(uploadTask.snapshot.ref).then
-                    ((downloadUrl) => {
-                        setFormData({ ...formData, avatar: downloadUrl });
-                    });
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadUrl) => setFormData({ ...formData, avatar: downloadUrl }));
             }
 
         );
@@ -60,16 +57,16 @@ function Profile() {
         <div className='p-3 max-w-lg mx-auto'>
             <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
             <form className='flex flex-col gap-4'>
-                <input type='file' ref={fileRef} hidden accept='image/*' onChange={(e) => setFile(e.target.files[0])} />
-                <img onClick={() => fileRef.current.click()} src={currentUser.avatar} alt='profile' className='w-24 h-24 mt-2  self-center rounded-full object-cover cursor-pointer hover:border-8 border-green-700' />
-                <p>
+                <input type='file' ref={fileRef} hidden onChange={(e) => setFile(e.target.files[0])} />
+                <img onClick={() => fileRef.current.click()} src={formData.avatar || currentUser.avatar} alt='profile' className='w-24 h-24 mt-2  self-center rounded-full object-cover cursor-pointer hover:border-8 border-green-700' />
+                <p className='text-sm self-center'>
                     {
                         fileError ? (
                             <span className='text-red-700'>Error while image upload</span>
                         ) : fileperc > 0 && fileperc < 100 ? (
-                            <span className='text-slate-700'>{`Uploading ${fileperc}%`}</span>
+                                <span className='text-slate-700 '>{`Uploading ${fileperc}%`}</span>
                         ) : fileperc === 100 ? (
-                            <span className='text-green-700'>Image Upload Successfully</span>
+                                    <span className='text-green-700 '>Image Upload Successfully</span>
                         ) : " "
 
                     }
@@ -90,4 +87,4 @@ function Profile() {
     )
 }
 
-export default Profile
+export default Profile;
