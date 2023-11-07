@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { useRef } from 'react';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import { app } from '../FirebaseAuth';
+import { updateUserStart, updateUserSuccess, updateUserFailure } from '../redux/user/userSlice';
+import { useDispatch } from 'react-redux';
 
 function Profile() {
     const { currentUser } = useSelector(state => state.user);
@@ -11,7 +13,7 @@ function Profile() {
     const [fileperc, setFilePerc] = useState(0);
     const [fileError, setFileError] = useState(false);
     const [formData, setFormData] = useState({});
-
+    const dispatch = useDispatch();
 
 
 
@@ -50,11 +52,38 @@ function Profile() {
 
         );
     }
+    const handleChange = (event) => {
+        setFormData({ ...formData, [event.target.id]: event.target.value });
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        try {
+            dispatch(updateUserStart());
+            const res = await fetch(`http://localhost:6400/api/user/update/${currentUser._id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            const data = await res.json();
+            if (data.success === false) {
+                dispatch(updateUserFailure(data.message));
+                return;
+            }
+
+            dispatch(updateUserSuccess());
+        } catch (error) {
+            dispatch(updateUserFailure(error.message));
+        }
+    }
 
     return (
         <div className='p-3 max-w-lg mx-auto'>
             <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
-            <form className='flex flex-col gap-4'>
+            <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                 <input type='file' ref={fileRef} hidden onChange={(e) => setFile(e.target.files[0])} />
                 <img onClick={() => fileRef.current.click()} src={formData.avatar || currentUser.avatar} alt='profile' className='w-24 h-24 mt-2  self-center rounded-full object-cover cursor-pointer hover:border-8 border-green-700' />
                 <p className='text-sm self-center'>
@@ -70,9 +99,9 @@ function Profile() {
                     }
                 </p>
 
-                <input type='text' placeholder='username' className='border p-3 rounded-lg' id='username' />
-                <input type='email' placeholder='email' className='border p-3 rounded-lg' id='email' />
-                <input type='password' placeholder='password' className='border p-3 rounded-lg' id='password' />
+                <input type='text' placeholder='username' className='border p-3 rounded-lg' id='username' defaultValue={currentUser.username} onChange={handleChange} />
+                <input type='email' placeholder='email' className='border p-3 rounded-lg' id='email' defaultValue={currentUser.email} onChange={handleChange} />
+                <input type='password' placeholder='password' className='border p-3 rounded-lg' id='password' onChange={handleChange} />
                 <button className='p-3 rounded-lg uppercase bg-slate-600 text-white'>
                     update
                 </button>
