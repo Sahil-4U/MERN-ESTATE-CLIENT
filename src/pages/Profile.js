@@ -76,6 +76,7 @@ function Profile() {
 
             dispatch(updateUserSuccess());
         } catch (error) {
+            console.log(error);
             dispatch(updateUserFailure(error.message));
         }
     }
