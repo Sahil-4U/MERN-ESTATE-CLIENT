@@ -25,9 +25,10 @@ function SignIn() {
             const res = await fetch('http://localhost:6400/api/auth/sign-in', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json', 
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(formData),
+                credentials: 'include', // Include cookies
             });
             const data = await res.json();
             console.log("data of response", data)
