@@ -31,7 +31,7 @@ function SignIn() {
                 credentials: 'include', // Include cookies
             });
             const data = await res.json();
-            console.log("data of response", data)
+
             if (data.success === false) {
                 dispatch(signInFailure(data.message));
                 return;

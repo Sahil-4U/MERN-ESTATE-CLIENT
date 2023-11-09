@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 
 function Profile() {
     const { currentUser } = useSelector(state => state.user);
-    const fileRef = useRef(null);
+    const fileRef = useRef(null);   
     const [file, setFile] = useState(undefined);
     const [fileperc, setFilePerc] = useState(0);
     const [fileError, setFileError] = useState(false);
@@ -61,20 +61,24 @@ function Profile() {
 
         try {
             dispatch(updateUserStart());
+            console.log(currentUser);
             const res = await fetch(`http://localhost:6400/api/user/update/${currentUser._id}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(formData),
+                credentials: 'include',
             });
             const data = await res.json();
+            console.log(data);
             if (data.success === false) {
                 dispatch(updateUserFailure(data.message));
                 return;
             }
 
             dispatch(updateUserSuccess());
+
         } catch (error) {
             console.log(error);
             dispatch(updateUserFailure(error.message));
@@ -86,7 +90,7 @@ function Profile() {
             <h1 className='text-3xl font-semibold text-center my-7'>Profile</h1>
             <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
                 <input type='file' ref={fileRef} hidden onChange={(e) => setFile(e.target.files[0])} />
-                <img onClick={() => fileRef.current.click()} src={formData.avatar || currentUser.avatar} alt='profile' className='w-24 h-24 mt-2  self-center rounded-full object-cover cursor-pointer hover:border-8 border-green-700' />
+                <img onClick={() => fileRef.current.click()} src={formData?.avatar || currentUser?.avatar} alt='profile' className='w-24 h-24 mt-2  self-center rounded-full object-cover cursor-pointer hover:border-8 border-green-700' />
                 <p className='text-sm self-center'>
                     {
                         fileError ? (
